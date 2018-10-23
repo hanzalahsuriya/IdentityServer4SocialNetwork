@@ -1,0 +1,21 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/SocialNetwork.Api/bin/Debug
+/SocialNetwork.Api/obj
+/SocialNetwork.Data/bin/Debug/netcoreapp1.1
+/SocialNetwork.Data/obj
+/SocialNetwork.DbMigrations/bin/Debug
+/SocialNetwork.DbMigrations/obj/Debug
+/SocialNetwork.OAuth/bin/Debug/netcoreapp1.1
+/SocialNetwork.OAuth/obj
+/SocialNetwork.OAuthId/bin/Debug/netcoreapp2.0
+/SocialNetwork.OAuthId/obj
+/SocialNetwork.Web/bin/Debug/netcoreapp1.1
+/SocialNetwork.Web/obj
+/SocialNetwork.WebApp/bin/Debug/netcoreapp2.0
+/SocialNetwork.WebApp/obj
+/packages/dbup.3.3.5/lib/net35
+/packages/dbup.3.3.5
