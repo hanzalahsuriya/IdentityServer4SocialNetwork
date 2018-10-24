@@ -14,7 +14,10 @@ namespace SocialNetwork.OAuthId
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            Console.Title = "IdentityServer";
+            var host = BuildWebHost(args);
+            SeedData.EnsureSeedData(host.Services);
+            host.Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
