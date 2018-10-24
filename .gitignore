@@ -19,3 +19,6 @@
 /SocialNetwork.WebApp/obj
 /packages/dbup.3.3.5/lib/net35
 /packages/dbup.3.3.5
+/SocialNetwork.oauth.DbMigrations/bin/Debug/netcoreapp2.0
+/SocialNetwork.oauth.DbMigrations/obj
+/packages
