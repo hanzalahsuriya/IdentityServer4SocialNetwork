@@ -19,6 +19,9 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 using SocialNetwork.OAuthId.Data;
+using SocialNetwork.OAuthId.Quickstart.Account;
+using Microsoft.Extensions.Logging;
+using SocialNetwork.OAuthId.Services;
 
 namespace IdentityServer4.Quickstart.UI
 {
@@ -31,6 +34,8 @@ namespace IdentityServer4.Quickstart.UI
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
+        private readonly ILogger _logger;
+        private readonly IEmailSender _emailSender;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -38,7 +43,10 @@ namespace IdentityServer4.Quickstart.UI
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
-            IEventService events)
+            IEventService events,
+            ILogger logger,
+            IEmailSender emailSender 
+            )
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -46,6 +54,8 @@ namespace IdentityServer4.Quickstart.UI
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
             _events = events;
+            _logger = logger;
+            _emailSender = emailSender;
         }
 
         /// <summary>
@@ -537,5 +547,71 @@ namespace IdentityServer4.Quickstart.UI
         private void ProcessLoginCallbackForSaml2p(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
         {
         }
+
+        public IActionResult Register(string returnUrl)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterModel model, string returnUrl)
+        {
+            if(ModelState.IsValid)
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if(result.Succeeded)
+                {
+                    _logger.LogInformation("user created a new account");
+
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var confirmationEmailLink = Url.Action("ConfirmEmailAddress", "Account", new { token, email = user.Email }, Request.Scheme);
+                    await _emailSender.SendEmailConfirmationAsync(model.Email, confirmationEmailLink);
+
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    _logger.LogInformation("User created a new account with password.");
+                    return RedirectToLocal(returnUrl);
+
+                }
+                else
+                {
+                    AddErrors(result.Errors);
+                    return View(model);
+                }
+
+            }
+
+            ViewData["ReturnUrl"] = returnUrl;
+            return View(model);
+        }
+
+        private IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+        }
+
+        private void AddErrors(IEnumerable<IdentityError> errors)
+        {
+            foreach(var error in errors)
+            {
+                ModelState.AddModelError(error.Code, error.Description);
+            }
+        }
+
     }
 }
