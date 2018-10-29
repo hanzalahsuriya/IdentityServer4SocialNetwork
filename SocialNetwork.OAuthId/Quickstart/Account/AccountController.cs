@@ -34,7 +34,7 @@ namespace IdentityServer4.Quickstart.UI
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
-        private readonly ILogger _logger;
+        //private readonly ILogger _logger;
         private readonly IEmailSender _emailSender;
 
         public AccountController(
@@ -43,9 +43,9 @@ namespace IdentityServer4.Quickstart.UI
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
-            IEventService events,
-            ILogger logger,
-            IEmailSender emailSender 
+            IEventService events
+            //ILogger logger,
+            //IEmailSender emailSender 
             )
         {
             _userManager = userManager;
@@ -54,8 +54,8 @@ namespace IdentityServer4.Quickstart.UI
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
             _events = events;
-            _logger = logger;
-            _emailSender = emailSender;
+            //_logger = logger;
+            //_emailSender = emailSender;
         }
 
         /// <summary>
@@ -570,14 +570,17 @@ namespace IdentityServer4.Quickstart.UI
 
                 if(result.Succeeded)
                 {
-                    _logger.LogInformation("user created a new account");
+                    //_logger.LogInformation("user created a new account");
 
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var confirmationEmailLink = Url.Action("ConfirmEmailAddress", "Account", new { token, email = user.Email }, Request.Scheme);
-                    await _emailSender.SendEmailConfirmationAsync(model.Email, confirmationEmailLink);
+                    //await _emailSender.SendEmailConfirmationAsync(model.Email, confirmationEmailLink);
+
+
+                    await _userManager.AddClaimAsync(user, new Claim("email1", "dskjhfkjsd"));
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    _logger.LogInformation("User created a new account with password.");
+                    //_logger.LogInformation("User created a new account with password.");
                     return RedirectToLocal(returnUrl);
 
                 }
@@ -586,6 +589,41 @@ namespace IdentityServer4.Quickstart.UI
                     AddErrors(result.Errors);
                     return View(model);
                 }
+
+
+
+                //_userManager.IsPhoneNumberConfirmedAsync(user)
+                //_userManager.VerifyChangePhoneNumberTokenAsync()
+
+
+                // reset and confirm email both uses DataProtectionTokenProviderOptions ... and a configuration is set to 3 hours for resert 
+                // we want to have a different time for confirm password.... may be 3 days
+
+                // create custom token provider
+
+
+                //_userManager.ChangePasswordAsync()
+
+                // this is for two factory authentication
+                //IUserTwoFactorTokenProvider aa;
+                //aa.CanGenerateTwoFactorTokenAsync
+                //aa.GenerateAsync
+                //aa.ValidateAsync
+
+
+
+                //EmailTokenProvider ee;
+                //PhoneNumberTokenProvider
+                //both above share base  TotpSecurityStampBasedTokenProvider which implements IUserTwoFactorTokenProvider
+                //TotpSecurityStampBasedTokenProvider : default 3 mins lifespan, 6 digit long
+
+
+
+
+                // may be IProfileService, IClientStore, ICorsPolicyService....
+
+                
+
 
             }
 

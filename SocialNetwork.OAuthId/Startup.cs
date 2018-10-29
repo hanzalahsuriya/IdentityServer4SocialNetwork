@@ -54,7 +54,15 @@ namespace SocialNetwork.OAuthId
             services.AddDbContext<ApplicationUserDbContext>(opt => opt.UseSqlServer(connectionString,
                 sql => sql.MigrationsAssembly(migrationAssembly)));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options => { })
+            services.AddIdentity<ApplicationUser, IdentityRole>(options => 
+            {
+
+                //options.SignIn.RequireConfirmedPhoneNumber = true;
+
+
+                //options.Tokens.
+
+            })
                 .AddEntityFrameworkStores<ApplicationUserDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -76,6 +84,7 @@ namespace SocialNetwork.OAuthId
                 options.TokenCleanupInterval = 30;
             })
             .AddSigningCredential(new X509Certificate2(@"C:\Users\M.hanzalah\socialnetwork.pfx"));
+
 
             //services.AddIdentityServer()
             //    .AddTestUsers(InMemoryConfiguration.Users().ToList())

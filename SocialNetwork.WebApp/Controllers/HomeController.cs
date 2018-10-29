@@ -30,11 +30,18 @@ namespace SocialNetwork.WebApp.Controllers
             {
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", accessToken);
-                var shoutsResponse = await (await client.GetAsync($"http://localhost:5001/api/shouts")).Content.ReadAsStringAsync();
 
+                var response = await client.GetAsync($"http://localhost:5001/api/shouts");
+
+                if(response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    return View("Unauthorized");
+                }
+
+                var shoutsResponse = await response.Content.ReadAsStringAsync();
                 var shouts = JsonConvert.DeserializeObject<Shout[]>(shoutsResponse);
-                
                 return View(shouts);
+               
             }
         }
 

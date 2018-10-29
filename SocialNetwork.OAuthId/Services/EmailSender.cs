@@ -11,5 +11,10 @@ namespace SocialNetwork.OAuthId.Services
         {
             await Task.CompletedTask;
         }
+
+        public Task SendEmailConfirmationAsync(string email, string confirmationEmailLink)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -15,9 +15,29 @@ namespace SocialNetwork.OAuthId.Configuration
         {
             return new[]
             {
-                new ApiResource("socialnetwork", "Social Network")
+                new ApiResource()
                 {
-                    UserClaims = new List<string> { "email" }
+                    ApiSecrets = new List<Secret>(),
+                    UserClaims = new List<string> { "email1" },
+                    Scopes = new List<Scope>()
+                    {
+                        new Scope()
+                        {
+                            Name = "socialnetwork",
+                            DisplayName = "Social Network",
+                            ShowInDiscoveryDocument = true,
+                            UserClaims = new[]
+                            {
+                                "email1"
+                            }
+                        },
+                        new Scope()
+                        {
+                            Name = "socialnetwork_readonly",
+                            DisplayName = "Social Network (ReadOnly)",
+                            ShowInDiscoveryDocument = true
+                        }
+                    }
                 }
             };
         }
@@ -43,8 +63,12 @@ namespace SocialNetwork.OAuthId.Configuration
                     {
                         new Secret("client_secret".Sha256())
                     },
+                    Claims = new List<Claim> {
+                        new Claim("IsAdmin", "sdsadas")
+                    },
+                  
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials,
-                    AllowedScopes = new[] { "socialnetwork" }
+                    AllowedScopes = new[] { "socialnetwork" },
                 },
                 new Client()
                 {
